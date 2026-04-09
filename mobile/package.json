@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "apk": "eas build --platform android --profile preview"
+    "apk": "eas build --platform android --profile public-apk",
+    "apk:lan": "eas build --platform android --profile preview"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -23,5 +24,8 @@
     "react-native-maps": "1.20.1",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0"
+  },
+  "devDependencies": {
+    "eas-cli": "^18.5.0"
   }
 }

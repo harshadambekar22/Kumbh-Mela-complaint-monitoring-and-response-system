@@ -22,8 +22,8 @@ app.set("trust proxy", 1);
 app.use(
   cors({
     origin(origin, callback) {
-      // Allow server-to-server tools and health checks without Origin header.
-      if (!origin) return callback(null, true);
+      // Allow tools and native apps (no Origin, or literal "null" from some clients).
+      if (!origin || origin === "null") return callback(null, true);
       if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
       return callback(new Error("CORS blocked for origin"));
     },
