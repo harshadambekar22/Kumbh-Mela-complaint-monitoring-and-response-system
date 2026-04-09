@@ -1,0 +1,39 @@
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Default to localhost for physical Android device with `adb reverse`.
+// Override with EXPO_PUBLIC_API_URL for LAN/Wi-Fi runs.
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://127.0.0.1:5000";
+
+const api = axios.create({ baseURL: API_BASE_URL });
+
+api.interceptors.request.use(async (config) => {
+  const token = await AsyncStorage.getItem("mobile_auth_token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+export async function register(payload) {
+  const { data } = await api.post("/api/auth/register", payload);
+  return data;
+}
+
+export async function login(email, password) {
+  const { data } = await api.post("/api/auth/login", { email, password });
+  return data;
+}
+
+export async function getComplaints(params = {}) {
+  const { data } = await api.get("/api/complaints", { params });
+  return data;
+}
+
+export async function getAnalyticsSummary() {
+  const { data } = await api.get("/api/complaints/analytics/summary");
+  return data;
+}
+
+export async function updateComplaintStatus(id, status) {
+  const { data } = await api.patch(`/api/complaints/${id}/status`, { status });
+  return data;
+}

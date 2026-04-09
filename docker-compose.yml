@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  ai-service:
+    build:
+      context: ./ai-service
+    ports:
+      - "8001:8001"
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/kumbh-complaints
+      AI_SERVICE_URL: http://ai-service:8001
+      FRONTEND_URL: http://localhost:4173
+      JWT_SECRET: change-me
+      JWT_EXPIRES_IN: 12h
+    depends_on:
+      - mongo
+      - ai-service
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      VITE_API_URL: http://localhost:5000
+    depends_on:
+      - backend
+    ports:
+      - "4173:4173"
+
+volumes:
+  mongo_data:

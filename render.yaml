@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: kumbh-ai-service
+    runtime: python
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+
+  - type: web
+    name: kumbh-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: kumbh-ai-service
+          property: hostport
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: kumbh-frontend
+          property: hostport
+
+  - type: web
+    name: kumbh-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: kumbh-backend
+          property: hostport

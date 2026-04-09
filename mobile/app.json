@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "Kumbh Complaint Mobile",
+    "slug": "kumbh-complaint-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kumbh.complaintmobile"
+    },
+    "android": {
+      "package": "com.kumbh.complaintmobile",
+      "versionCode": 1,
+      "permissions": ["INTERNET", "ACCESS_NETWORK_STATE"]
+    }
+  }
+}

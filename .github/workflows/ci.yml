@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, frontend, ai-service]
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        if: matrix.service != 'ai-service'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Python
+        if: matrix.service == 'ai-service'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install backend/frontend deps
+        if: matrix.service != 'ai-service'
+        run: npm ci
+
+      - name: Build frontend
+        if: matrix.service == 'frontend'
+        run: npm run build
+
+      - name: Install ai deps
+        if: matrix.service == 'ai-service'
+        run: pip install -r requirements.txt
+
+      - name: Syntax check ai service
+        if: matrix.service == 'ai-service'
+        run: python -m py_compile app/main.py
