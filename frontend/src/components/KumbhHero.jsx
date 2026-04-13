@@ -5,9 +5,15 @@ const PHOTOS = [
   "https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&w=1600&q=80",
   "https://images.unsplash.com/photo-1524492449090-1f0f25c00b7b?auto=format&fit=crop&w=1600&q=80",
 ];
+const FALLBACK_PHOTO = "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=1600&q=80";
 
 export default function KumbhHero({ title, subtitle }) {
   const [idx, setIdx] = useState(0);
+  const [src, setSrc] = useState(PHOTOS[0]);
+
+  useEffect(() => {
+    setSrc(PHOTOS[idx]);
+  }, [idx]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,7 +24,12 @@ export default function KumbhHero({ title, subtitle }) {
 
   return (
     <div className="relative overflow-hidden rounded-2xl shadow-xl">
-      <img src={PHOTOS[idx]} alt="Kumbh Mela" className="h-52 w-full object-cover transition-all duration-700 pulse-soft" />
+      <img
+        src={src}
+        alt=""
+        onError={() => setSrc(FALLBACK_PHOTO)}
+        className="h-52 w-full object-cover transition-all duration-700 pulse-soft"
+      />
       <div className="kumbh-hero-overlay absolute inset-0" />
       <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
         <h1 className="text-2xl font-extrabold tracking-tight">{title}</h1>

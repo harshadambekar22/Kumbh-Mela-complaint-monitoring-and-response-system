@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, Text, Pressable, Linking } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 
 const GEOFENCES = [
@@ -58,6 +58,7 @@ export default function MapScreen({ complaints }) {
       min-width: 120px; font-size: 11px;
     }
     .dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:6px; }
+    .leaflet-control-attribution { display: none !important; }
   </style>
 </head>
 <body>
@@ -71,7 +72,7 @@ export default function MapScreen({ complaints }) {
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([19.9975, 73.7898], 13);
-    L.tileLayer('${tile}', { maxZoom: 20 }).addTo(map);
+    L.tileLayer('${tile}', { maxZoom: 20, detectRetina: true }).addTo(map);
     const zones = ${JSON.stringify(GEOFENCES)};
     const showZones = ${showZones ? "true" : "false"};
     if (showZones) {
@@ -112,12 +113,6 @@ export default function MapScreen({ complaints }) {
         <Text style={styles.summaryText}>Total complaints: {summary.total}</Text>
         <Text style={styles.summaryText}>High priority: {summary.high}</Text>
         <Text style={styles.summaryText}>Zones: {GEOFENCES.map((z) => z.name).join(", ")}</Text>
-        <Pressable
-          style={styles.openExternalBtn}
-          onPress={() => Linking.openURL("https://www.openstreetmap.org/#map=13/19.9975/73.7898")}
-        >
-          <Text style={styles.openExternalText}>Open full map in browser</Text>
-        </Pressable>
       </View>
     </View>
   );
@@ -149,13 +144,4 @@ const styles = StyleSheet.create({
   modeBtnActive: { backgroundColor: "#c2410c" },
   modeBtnText: { color: "#fff", fontSize: 11, fontWeight: "700" },
   summaryText: { fontSize: 12, color: "#475569" },
-  openExternalBtn: {
-    marginTop: 8,
-    alignSelf: "flex-start",
-    backgroundColor: "#0f172a",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  openExternalText: { color: "#fff", fontSize: 11, fontWeight: "700" },
 });

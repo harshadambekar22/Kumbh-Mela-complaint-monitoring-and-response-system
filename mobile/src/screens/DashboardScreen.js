@@ -50,6 +50,13 @@ export default function DashboardScreen({ complaints, analytics }) {
     return { likelyNextHour, riskLevel, advisory };
   }, [complaints]);
 
+  const responseMomentum = useMemo(() => {
+    const unresolved = complaints.filter((c) => c.status !== "resolved").length;
+    const resolved = complaints.filter((c) => c.status === "resolved").length;
+    const score = Math.max(10, Math.min(98, Math.round((resolved / Math.max(1, unresolved + resolved)) * 100)));
+    return { score, unresolved };
+  }, [complaints]);
+
   return (
     <FlatList
       data={analytics?.departmentPerformance || []}
@@ -109,6 +116,16 @@ export default function DashboardScreen({ complaints, analytics }) {
             </View>
           </View>
 
+          <View style={styles.momentumCard}>
+            <Text style={styles.momentumTitle}>Response Momentum</Text>
+            <View style={styles.momentumTrack}>
+              <View style={[styles.momentumFill, { width: `${responseMomentum.score}%` }]} />
+            </View>
+            <Text style={styles.momentumMeta}>
+              Efficiency score: {responseMomentum.score}% • Active unresolved: {responseMomentum.unresolved}
+            </Text>
+          </View>
+
           <Text style={styles.sectionTitle}>Kumbh Moments</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.stripWrap}>
             {PHOTO_STRIP.map((uri) => (
@@ -154,6 +171,18 @@ const styles = StyleSheet.create({
     borderColor: "#fed7aa",
     backgroundColor: "#fff7ed",
   },
+  momentumCard: {
+    marginTop: 10,
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#c7d2fe",
+    backgroundColor: "#eef2ff",
+  },
+  momentumTitle: { fontSize: 13, fontWeight: "800", color: "#312e81", marginBottom: 8 },
+  momentumTrack: { height: 10, backgroundColor: "#c7d2fe", borderRadius: 999, overflow: "hidden" },
+  momentumFill: { height: "100%", backgroundColor: "#6366f1", borderRadius: 999 },
+  momentumMeta: { marginTop: 7, fontSize: 12, color: "#475569" },
   predictionTitle: { fontSize: 13, fontWeight: "800", color: "#9a3412", marginBottom: 4 },
   predictionKpi: { fontSize: 14, fontWeight: "800", color: "#0f172a", marginBottom: 3 },
   predictionMeta: { fontSize: 12, color: "#475569" },
