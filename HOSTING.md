@@ -2,6 +2,32 @@
 
 This stack uses **free tiers** only. Expect **cold starts** on Render (first request after ~15 minutes idle can take ~30–60 seconds).
 
+### Render still has a free tier (if the UI looks “paid”)
+
+Render’s **Free** plan is limited (sleep after idle, hobby use) but **does not require a paid subscription** for those instances. If you only see paid prices:
+
+1. When creating each **Web Service** or **Blueprint**, open the **Instance type** / **Plan** dropdown and choose **`Free`** (not Starter/Standard).
+2. Some **workspaces** show paid defaults—scroll for **Free** or create a **personal** workspace.
+3. A **credit card** is sometimes asked for verification even on Free; that does not automatically charge you, but read Render’s billing page before confirming.
+
+Official summary: [Render — Deploy for Free](https://render.com/free).
+
+### If you cannot use Render at all — other free options
+
+Your app needs **(1) Node API**, **(2) Python AI**, **(3) static frontend**, plus **MongoDB Atlas** (free). Fully free “one click” for all three is rare; typical patterns:
+
+| Approach | Notes |
+|----------|--------|
+| **[Fly.io](https://fly.io/docs/)** | Free resource allowance; you deploy with `fly.toml` / CLI. Fits small Node + Python apps; may need two apps (API + AI). |
+| **[Koyeb](https://www.koyeb.com/)** | Free tier with limits; deploy from GitHub. |
+| **[Railway](https://railway.app/)** | Often **trial credit**, not forever-free—check current terms. |
+| **[Oracle Cloud “Always Free”](https://www.oracle.com/cloud/free/)** | Two small VMs forever-free; **you** install Docker/Node/Python (advanced, but no monthly bill if you stay in limits). |
+| **Frontend only** | **[Cloudflare Pages](https://pages.cloudflare.com/)** or **[Vercel](https://vercel.com/)** — free static hosting. Build with `VITE_API_URL=https://your-api-url` pointing wherever your API lives. |
+
+**Mobile APK:** unchanged — set `EXPO_PUBLIC_API_URL` in `mobile/eas.json` to whatever **public HTTPS** URL your API has (Render, Fly.io, etc.), then `eas build`.
+
+---
+
 ## What you provide vs what is automatic
 
 | You provide | Why |
