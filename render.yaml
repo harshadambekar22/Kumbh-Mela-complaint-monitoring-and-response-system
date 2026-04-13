@@ -37,7 +37,7 @@ services:
   - type: web
     name: kumbh-frontend
     runtime: static
-    plan: free
+    # Static sites: omit `plan` — Blueprint does not accept `plan: free` for runtime: static.
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist

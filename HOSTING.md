@@ -2,6 +2,10 @@
 
 This stack uses **free tiers** only. Expect **cold starts** on Render (first request after ~15 minutes idle can take ~30–60 seconds).
 
+### Blueprint note: static site (`kumbh-frontend`)
+
+In `render.yaml`, the **static** dashboard service must **not** use `plan: free` (Render returns `no such plan free for service type web` for `runtime: static`). Static sites stay free without that line.
+
 ### Render still has a free tier (if the UI looks “paid”)
 
 Render’s **Free** plan is limited (sleep after idle, hobby use) but **does not require a paid subscription** for those instances. If you only see paid prices:
