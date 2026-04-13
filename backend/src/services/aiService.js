@@ -1,6 +1,15 @@
 const axios = require("axios");
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://127.0.0.1:8001";
+function normalizeAiServiceUrl(raw) {
+  const fallback = "http://127.0.0.1:8001";
+  const u = String(raw || "").trim();
+  if (!u) return fallback;
+  if (u.startsWith("http://") || u.startsWith("https://")) return u;
+  // Render Blueprint may set host:port for private network (e.g. kumbh-ai-service:10000).
+  return `http://${u}`;
+}
+
+const AI_SERVICE_URL = normalizeAiServiceUrl(process.env.AI_SERVICE_URL);
 
 const CATEGORY_COORDS = {
   traffic: { lat: 19.9975, lng: 73.7898 },

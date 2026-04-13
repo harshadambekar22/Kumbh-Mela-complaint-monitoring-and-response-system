@@ -1,9 +1,12 @@
+# Free tier: Render web + static (cold start ~1 min after 15 min idle; 750 compute hrs/mo per workspace).
+# Service names define public URLs: https://<name>.onrender.com
 services:
   - type: web
     name: kumbh-ai-service
     runtime: python
+    plan: free
     rootDir: ai-service
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && python -m spacy download en_core_web_sm
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     autoDeploy: true
@@ -11,6 +14,7 @@ services:
   - type: web
     name: kumbh-backend
     runtime: node
+    plan: free
     rootDir: backend
     buildCommand: npm install
     startCommand: npm start
@@ -19,27 +23,26 @@ services:
     envVars:
       - key: MONGODB_URI
         sync: false
+      - key: JWT_SECRET
+        generateValue: true
       - key: AI_SERVICE_URL
         fromService:
           type: web
           name: kumbh-ai-service
           property: hostport
+      # Public origin of the static dashboard (browser CORS). Must match your site URL exactly.
       - key: FRONTEND_URL
-        fromService:
-          type: web
-          name: kumbh-frontend
-          property: hostport
+        value: https://kumbh-frontend.onrender.com
 
   - type: web
     name: kumbh-frontend
     runtime: static
+    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     autoDeploy: true
     envVars:
+      # Public API URL baked into the web app at build time (must be HTTPS, reachable from browsers & phones).
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: kumbh-backend
-          property: hostport
+        value: https://kumbh-backend.onrender.com

@@ -15,7 +15,9 @@ import {
   getAnalyticsSummary,
   getComplaints,
   getSavedViews,
+  ingestPosts,
   login,
+  processIngestionQueue,
   register,
   reviewComplaint,
   updateComplaintStatus,
@@ -94,6 +96,20 @@ export default function App() {
     await fetchComplaints(filters);
   };
 
+  /** Queue one demo Nashik/Kumbh post and run /process so tickets appear without social API keys. */
+  const runDemoComplaint = async () => {
+    await ingestPosts([
+      {
+        platform: "demo",
+        username: "test_user",
+        text: "Water supply issue in Panchavati area Nashik during Kumbh — low pressure since morning.",
+        createdAt: new Date().toISOString(),
+      },
+    ]);
+    await processIngestionQueue();
+    await Promise.all([fetchComplaints(filters), refreshDashboard()]);
+  };
+
   const saveCurrentView = async () => {
     const name = window.prompt("Saved view name", "My View");
     if (!name) return;
@@ -144,7 +160,16 @@ export default function App() {
             <h2 className="text-xl md:text-2xl font-bold">
               Welcome, <span className="kumbh-gradient-text">{auth.user?.name}</span>
             </h2>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              {(auth.user?.role === "admin" || auth.user?.role === "operator") && (
+                <button
+                  type="button"
+                  onClick={runDemoComplaint}
+                  className="rounded border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-900 hover:bg-orange-100"
+                >
+                  Add demo complaint (test)
+                </button>
+              )}
               <button onClick={saveCurrentView} className="rounded bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800">
                 Save View
               </button>

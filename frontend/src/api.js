@@ -27,6 +27,12 @@ export async function ingestPosts(posts) {
   return data;
 }
 
+/** Turns queued posts (from ingest or social sync) into complaint tickets via AI pipeline. */
+export async function processIngestionQueue() {
+  const { data } = await api.post("/api/complaints/process");
+  return data;
+}
+
 export async function getComplaints(params = {}) {
   const { data } = await api.get("/api/complaints", { params });
   return data;
