@@ -5,7 +5,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Override with EXPO_PUBLIC_API_URL for LAN/Wi-Fi runs.
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://127.0.0.1:5000";
 
-const api = axios.create({ baseURL: API_BASE_URL });
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 20000,
+});
 
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem("mobile_auth_token");
@@ -36,4 +39,14 @@ export async function getAnalyticsSummary() {
 export async function updateComplaintStatus(id, status) {
   const { data } = await api.patch(`/api/complaints/${id}/status`, { status });
   return data;
+}
+
+// Render free services can be asleep; a quick health call helps warm up before auth.
+export async function warmUpServer() {
+  try {
+    await api.get("/health", { timeout: 12000 });
+    return true;
+  } catch (_error) {
+    return false;
+  }
 }

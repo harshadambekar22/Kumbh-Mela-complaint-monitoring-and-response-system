@@ -4,6 +4,7 @@
     "slug": "kumbh-complaint-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./assets/kumbh-icon.png",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
@@ -15,6 +16,10 @@
     "android": {
       "package": "com.kumbh.complaintmobile",
       "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/kumbh-icon.png",
+        "backgroundColor": "#f58426"
+      },
       "permissions": [
         "INTERNET",
         "ACCESS_NETWORK_STATE"
@@ -22,8 +27,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "c456e4ca-83f1-4284-9ee0-d2b5d4cccb4d"
+        "projectId": "a7890ad8-dc8c-48a3-be9c-732d19aa83b2"
       }
-    }
+    },
+    "owner": "harshadambekar2225"
   }
 }

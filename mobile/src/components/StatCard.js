@@ -6,6 +6,7 @@ export default function StatCard({ title, value, color = "#0f172a" }) {
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
       <Text style={[styles.value, { color }]}>{value}</Text>
+      <View style={styles.pulseLine} />
     </View>
   );
 }
@@ -25,4 +26,11 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 12, color: "#64748b", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.7 },
   value: { fontSize: 26, fontWeight: "800" },
+  pulseLine: {
+    marginTop: 10,
+    height: 4,
+    borderRadius: 4,
+    width: "72%",
+    backgroundColor: "#fdba74",
+  },
 });

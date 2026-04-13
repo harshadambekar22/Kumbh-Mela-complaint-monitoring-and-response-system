@@ -10,7 +10,7 @@ import AuthScreen from "./screens/AuthScreen";
 import DashboardScreen from "./screens/DashboardScreen";
 import MapScreen from "./screens/MapScreen";
 import TasksScreen from "./screens/TasksScreen";
-import { getAnalyticsSummary, getComplaints, login, register, updateComplaintStatus } from "./api";
+import { getAnalyticsSummary, getComplaints, login, register, updateComplaintStatus, warmUpServer } from "./api";
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -86,11 +86,16 @@ export default function App() {
   const [auth, setAuth] = useState(null);
   const [complaints, setComplaints] = useState([]);
   const [analytics, setAnalytics] = useState(null);
+  const [authBusy, setAuthBusy] = useState(false);
 
   const refreshData = async () => {
-    const [list, summary] = await Promise.all([getComplaints({ limit: 200 }), getAnalyticsSummary()]);
-    setComplaints(list.items || []);
-    setAnalytics(summary);
+    try {
+      const [list, summary] = await Promise.all([getComplaints({ limit: 200 }), getAnalyticsSummary()]);
+      setComplaints(list.items || []);
+      setAnalytics(summary);
+    } catch (_error) {
+      // Keep current UI state; transient network failures should not break navigation.
+    }
   };
 
   useEffect(() => {
@@ -112,14 +117,26 @@ export default function App() {
   }, [auth]);
 
   const onLogin = async (email, password) => {
-    const data = await login(email, password);
-    await AsyncStorage.setItem("mobile_auth_token", data.token);
-    await AsyncStorage.setItem("mobile_auth_user", JSON.stringify(data.user));
-    setAuth({ token: data.token, user: data.user });
+    setAuthBusy(true);
+    try {
+      await warmUpServer();
+      const data = await login(email, password);
+      await AsyncStorage.setItem("mobile_auth_token", data.token);
+      await AsyncStorage.setItem("mobile_auth_user", JSON.stringify(data.user));
+      setAuth({ token: data.token, user: data.user });
+    } finally {
+      setAuthBusy(false);
+    }
   };
 
   const onRegister = async (payload) => {
-    await register(payload);
+    setAuthBusy(true);
+    try {
+      await warmUpServer();
+      await register(payload);
+    } finally {
+      setAuthBusy(false);
+    }
   };
 
   const onLogout = async () => {
@@ -137,7 +154,7 @@ export default function App() {
       <StatusBar style="dark" />
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!auth ? (
-          <Stack.Screen name="Auth" children={() => <AuthScreen onLogin={onLogin} onRegister={onRegister} />} />
+          <Stack.Screen name="Auth" children={() => <AuthScreen onLogin={onLogin} onRegister={onRegister} busy={authBusy} />} />
         ) : (
           <Stack.Screen
             name="Home"
