@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { View, StyleSheet, Text, Pressable, Animated } from "react-native";
 import { WebView } from "react-native-webview";
-import { colors, radii, shadows } from "../theme/tokens";
+import { colors, motion, radii, shadows } from "../theme/tokens";
 
 const GEOFENCES = [
   { id: "panchavati", name: "Panchavati", latitude: 20.0102, longitude: 73.7987, radius: 800 },
@@ -13,6 +13,7 @@ export default function MapScreen({ complaints }) {
   const [satellite, setSatellite] = useState(true);
   const [showHighOnly, setShowHighOnly] = useState(false);
   const [showZones, setShowZones] = useState(true);
+  const cardAnim = useRef(new Animated.Value(0)).current;
   const complaintRows = Array.isArray(complaints) ? complaints : [];
   const validComplaints = useMemo(
     () =>
@@ -33,6 +34,15 @@ export default function MapScreen({ complaints }) {
     total: filteredComplaints.length,
     high: validComplaints.filter((x) => x.priority === "high").length,
   }), [filteredComplaints, validComplaints]);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(cardAnim, { toValue: 1, duration: motion.loop, useNativeDriver: true }),
+        Animated.timing(cardAnim, { toValue: 0, duration: motion.loop, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [cardAnim]);
 
   const mapHtml = useMemo(() => {
     const markers = filteredComplaints.map((c) => ({
@@ -97,17 +107,24 @@ export default function MapScreen({ complaints }) {
     <View style={styles.container}>
       <WebView source={{ html: mapHtml }} style={styles.map} originWhitelist={["*"]} />
 
-      <View style={styles.summaryCard}>
+      <Animated.View
+        style={[
+          styles.summaryCard,
+          {
+            transform: [{ translateY: cardAnim.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }) }],
+          },
+        ]}
+      >
         <View style={styles.topRow}>
           <Text style={styles.summaryTitle}>Live Map Summary</Text>
           <View style={styles.controlsRow}>
-            <Pressable style={styles.modeBtn} onPress={() => setSatellite((v) => !v)}>
+            <Pressable style={({ pressed }) => [styles.modeBtn, pressed && styles.modeBtnPressed]} onPress={() => setSatellite((v) => !v)}>
               <Text style={styles.modeBtnText}>{satellite ? "Satellite" : "Street"}</Text>
             </Pressable>
-            <Pressable style={[styles.modeBtn, showHighOnly && styles.modeBtnActive]} onPress={() => setShowHighOnly((v) => !v)}>
+            <Pressable style={({ pressed }) => [styles.modeBtn, showHighOnly && styles.modeBtnActive, pressed && styles.modeBtnPressed]} onPress={() => setShowHighOnly((v) => !v)}>
               <Text style={styles.modeBtnText}>High only</Text>
             </Pressable>
-            <Pressable style={[styles.modeBtn, showZones && styles.modeBtnActive]} onPress={() => setShowZones((v) => !v)}>
+            <Pressable style={({ pressed }) => [styles.modeBtn, showZones && styles.modeBtnActive, pressed && styles.modeBtnPressed]} onPress={() => setShowZones((v) => !v)}>
               <Text style={styles.modeBtnText}>Zones</Text>
             </Pressable>
           </View>
@@ -115,7 +132,7 @@ export default function MapScreen({ complaints }) {
         <Text style={styles.summaryText}>Total complaints: {summary.total}</Text>
         <Text style={styles.summaryText}>High priority: {summary.high}</Text>
         <Text style={styles.summaryText}>Zones: {GEOFENCES.map((z) => z.name).join(", ")}</Text>
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -147,6 +164,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   modeBtnActive: { backgroundColor: "rgba(232,192,64,0.35)" },
+  modeBtnPressed: { transform: [{ scale: 0.96 }], opacity: 0.92 },
   modeBtnText: { color: colors.text, fontSize: 11, fontWeight: "700" },
   summaryText: { fontSize: 12, color: colors.textDim },
 });

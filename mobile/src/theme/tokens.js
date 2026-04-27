@@ -35,4 +35,5 @@ export const motion = {
   fast: 200,
   normal: 380,
   slow: 700,
+  loop: 1400,
 };

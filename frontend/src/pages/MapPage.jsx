@@ -53,15 +53,15 @@ export default function MapPage({ complaints }) {
     : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   return (
-    <div className="space-y-4">
-      <div className="nashik-surface p-4">
+    <div className="space-y-4 animate-enter-up">
+      <div className="nashik-surface animate-enter-scale animate-stagger-2 p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold nashik-title">Live Map Summary</h2>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setSatellite((v) => !v)}
-              className="nashik-btn-primary rounded-full px-3 py-1 text-xs font-semibold"
+              className="nashik-btn-primary animate-strong-glow rounded-full px-3 py-1 text-xs font-semibold"
             >
               {satellite ? "Satellite" : "Street"}
             </button>
@@ -69,7 +69,7 @@ export default function MapPage({ complaints }) {
               type="button"
               onClick={() => setShowHighOnly((v) => !v)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                showHighOnly ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)]" : "nashik-chip"
+                showHighOnly ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)] animate-chip-wave" : "nashik-chip"
               }`}
             >
               High only
@@ -78,7 +78,7 @@ export default function MapPage({ complaints }) {
               type="button"
               onClick={() => setShowZones((v) => !v)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                showZones ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)]" : "nashik-chip"
+                showZones ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)] animate-chip-wave" : "nashik-chip"
               }`}
             >
               Zones

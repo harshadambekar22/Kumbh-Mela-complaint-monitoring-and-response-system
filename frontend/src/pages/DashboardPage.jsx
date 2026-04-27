@@ -14,7 +14,7 @@ ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Le
 
 function StatCard({ title, value, accent }) {
   return (
-    <div className="card-lift nashik-surface-soft p-4">
+    <div className="card-lift nashik-surface-soft animate-enter-up animate-strong-glow p-4">
       <p className="text-xs uppercase tracking-wide nashik-subtitle">{title}</p>
       <p className={`text-3xl font-black ${accent}`}>{value}</p>
     </div>
@@ -58,7 +58,7 @@ export default function DashboardPage({ complaints, analytics, alerts }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-enter-up">
       {!!alerts?.length && (
         <div className="space-y-2">
           {alerts.map((alert, idx) => (
@@ -70,25 +70,25 @@ export default function DashboardPage({ complaints, analytics, alerts }) {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard title="Total Complaints" value={stats.total} accent="text-[var(--nashik-text)]" />
-        <StatCard title="High Priority" value={stats.high} accent="text-red-300" />
-        <StatCard title="Resolved" value={stats.resolved} accent="text-emerald-300" />
-        <StatCard title="In Progress" value={stats.progress} accent="text-amber-300" />
+        <div className="animate-counter-pop animate-stagger-1"><StatCard title="Total Complaints" value={stats.total} accent="text-[var(--nashik-text)]" /></div>
+        <div className="animate-counter-pop animate-stagger-2"><StatCard title="High Priority" value={stats.high} accent="text-red-300" /></div>
+        <div className="animate-counter-pop animate-stagger-3"><StatCard title="Resolved" value={stats.resolved} accent="text-emerald-300" /></div>
+        <div className="animate-counter-pop animate-stagger-4"><StatCard title="In Progress" value={stats.progress} accent="text-amber-300" /></div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {PHOTO_STRIP.map((src, idx) => (
-          <img key={idx} src={src} alt="Kumbh event" className="card-lift h-36 w-full rounded-xl object-cover border border-[var(--nashik-border)]" />
+          <img key={idx} src={src} alt="Kumbh event" className="card-lift animate-strong-pulse h-36 w-full rounded-xl object-cover border border-[var(--nashik-border)]" style={{ animationDelay: `${idx * 120}ms` }} />
         ))}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="nashik-surface p-4">
+        <div className="nashik-surface animate-enter-scale p-4">
           <h2 className="nashik-title font-semibold mb-4">Complaints by Category</h2>
           <Bar data={categoryData} />
         </div>
 
-        <div className="nashik-surface p-4">
+        <div className="nashik-surface animate-enter-scale p-4">
           <h2 className="nashik-title font-semibold mb-4">Complaints by Status</h2>
           <div className="max-w-sm mx-auto">
             <Pie data={statusData} />
@@ -96,7 +96,7 @@ export default function DashboardPage({ complaints, analytics, alerts }) {
         </div>
       </div>
 
-      <div className="nashik-surface p-4">
+      <div className="nashik-surface animate-enter-scale p-4">
         <h2 className="nashik-title font-semibold mb-3">Department Performance</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {(analytics?.departmentPerformance || []).map((row) => (

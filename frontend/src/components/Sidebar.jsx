@@ -13,8 +13,8 @@ export default function Sidebar({ user, onLogout }) {
   });
 
   return (
-    <aside className="w-full md:w-72 md:min-h-screen nashik-surface md:rounded-none rounded-b-2xl p-4 md:p-6 border-r md:border-r border-b md:border-b-0 border-[var(--nashik-border)]">
-      <h1 className="nashik-title text-xl font-extrabold mb-2 leading-snug">AI Complaint Task System</h1>
+    <aside className="w-full md:w-72 md:min-h-screen nashik-surface animate-enter-scale md:rounded-none rounded-b-2xl p-4 md:p-6 border-r md:border-r border-b md:border-b-0 border-[var(--nashik-border)]">
+      <h1 className="nashik-title animate-strong-float text-xl font-extrabold mb-2 leading-snug">AI Complaint Task System</h1>
       <p className="text-xs nashik-subtitle mb-6">Kumbh Mela Command Operations</p>
 
       <div className="mb-5 rounded-xl border border-[var(--nashik-border)] bg-[rgba(11,25,21,0.8)] p-3 text-xs">
@@ -40,7 +40,7 @@ export default function Sidebar({ user, onLogout }) {
         ))}
       </nav>
 
-      <button onClick={onLogout} className="mt-6 w-full rounded-lg bg-[rgba(255,245,196,0.15)] border border-[var(--nashik-border)] px-3 py-2.5 text-sm text-[var(--nashik-text)] hover:bg-[rgba(255,245,196,0.2)]">
+      <button onClick={onLogout} className="mt-6 w-full rounded-lg animate-strong-glow bg-[rgba(255,245,196,0.15)] border border-[var(--nashik-border)] px-3 py-2.5 text-sm text-[var(--nashik-text)] hover:bg-[rgba(255,245,196,0.2)]">
         Logout
       </button>
 

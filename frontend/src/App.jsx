@@ -39,6 +39,17 @@ export default function App() {
   const [savedViews, setSavedViews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ q: "", status: "", category: "", priority: "" });
+  const ambientParticles = useMemo(
+    () =>
+      Array.from({ length: 18 }, (_, i) => ({
+        id: i,
+        left: `${Math.random() * 100}%`,
+        bottom: `${Math.random() * 30}%`,
+        delay: `${Math.random() * 3}s`,
+        duration: `${4 + Math.random() * 5}s`,
+      })),
+    []
+  );
 
   const fetchComplaints = async (params = filters) => {
     const data = await getComplaints({ ...params, limit: 200 });
@@ -153,15 +164,24 @@ export default function App() {
 
   return (
     <div className="nashik-page-bg flex min-h-screen flex-col md:flex-row bg-transparent">
+      <div className="nashik-particles">
+        {ambientParticles.map((p) => (
+          <span
+            key={p.id}
+            className="nashik-particle"
+            style={{ left: p.left, bottom: p.bottom, animationDelay: p.delay, animationDuration: p.duration }}
+          />
+        ))}
+      </div>
       <Sidebar user={auth.user} onLogout={onLogout} />
 
-      <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-4">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-4 animate-enter-up">
         <KumbhHero
           title="Kumbh Mela Smart Complaint Command Center"
           subtitle="Live grievance intelligence platform for Nashik operations. Track, map, prioritize, and resolve public complaints in real time."
         />
 
-        <div className="nashik-surface p-4">
+        <div className="nashik-surface animate-enter-scale animate-stagger-1 p-4">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <h2 className="text-xl md:text-2xl font-bold text-[var(--nashik-text)]">
               Welcome, <span className="kumbh-gradient-text">{auth.user?.name}</span>
@@ -176,7 +196,7 @@ export default function App() {
                   Add demo complaint (test)
                 </button>
               )}
-              <button onClick={saveCurrentView} className="nashik-btn-primary px-3 py-2 text-sm">
+              <button onClick={saveCurrentView} className="nashik-btn-primary animate-strong-glow px-3 py-2 text-sm">
                 Save View
               </button>
             </div>

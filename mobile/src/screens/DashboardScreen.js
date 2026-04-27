@@ -14,6 +14,7 @@ export default function DashboardScreen({ complaints, analytics, loading = false
   const slideWidth = Math.max(280, width - 28);
   const scrollRef = useRef(null);
   const entranceAnim = useRef(new Animated.Value(0)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
   const [slideIndex, setSlideIndex] = useState(0);
   const [heroImageFailed, setHeroImageFailed] = useState(false);
 
@@ -24,6 +25,15 @@ export default function DashboardScreen({ complaints, analytics, loading = false
       useNativeDriver: true,
     }).start();
   }, [entranceAnim]);
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, { toValue: 1, duration: motion.loop, useNativeDriver: true }),
+        Animated.timing(floatAnim, { toValue: 0, duration: motion.loop, useNativeDriver: true }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
   useEffect(() => {
     HERO_IMAGES.forEach((img) => {
@@ -75,10 +85,15 @@ export default function DashboardScreen({ complaints, analytics, loading = false
                 style={[styles.hero, { width: slideWidth, height: Math.max(180, width * 0.48) }]}
                 imageStyle={styles.heroImage}
               >
-                <View style={styles.heroOverlay}>
+                <Animated.View
+                  style={[
+                    styles.heroOverlay,
+                    { transform: [{ translateY: floatAnim.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }) }] },
+                  ]}
+                >
                   <Text style={styles.heroTitle}>Kumbh Command Center</Text>
                   <Text style={styles.heroSubtitle}>Live complaint monitoring and action console</Text>
-                </View>
+                </Animated.View>
               </ImageBackground>
             ))}
           </ScrollView>

@@ -47,8 +47,8 @@ export default function TaskBoardPage({ complaints, onDropStatus, onAssign, onBu
   };
 
   return (
-    <div className="space-y-4">
-      <div className="relative overflow-hidden rounded-xl border border-[var(--nashik-border)]">
+    <div className="space-y-4 animate-enter-up">
+      <div className="relative overflow-hidden rounded-xl border border-[var(--nashik-border)] animate-enter-scale">
         <img src={BOARD_BANNER} alt="Kumbh operations" className="h-28 w-full object-cover" />
         <div className="kumbh-hero-overlay absolute inset-0" />
         <div className="absolute inset-0 flex items-center px-4 text-white">
@@ -56,7 +56,7 @@ export default function TaskBoardPage({ complaints, onDropStatus, onAssign, onBu
         </div>
       </div>
 
-      <div className="nashik-surface p-3 flex flex-wrap gap-3 items-center">
+      <div className="nashik-surface animate-enter-scale animate-stagger-2 p-3 flex flex-wrap gap-3 items-center">
         <p className="text-sm font-semibold text-[var(--nashik-text)]">Bulk Actions ({selectedIds.length} selected)</p>
         <button
           onClick={() => onBulkStatus(selectedIds, "resolved")}
@@ -80,7 +80,7 @@ export default function TaskBoardPage({ complaints, onDropStatus, onAssign, onBu
         />
         <button
           onClick={() => selectedIds.forEach((id) => onAssign(id, `assignee-${id}`, assigneeName))}
-          className="nashik-btn-primary px-3 py-1 text-sm disabled:opacity-50"
+          className="nashik-btn-primary animate-strong-glow px-3 py-1 text-sm disabled:opacity-50"
           disabled={!selectedIds.length}
         >
           Assign Selected
@@ -91,7 +91,7 @@ export default function TaskBoardPage({ complaints, onDropStatus, onAssign, onBu
         {columns.map((column) => (
           <div
             key={column.key}
-            className="nashik-surface rounded-xl p-3 min-h-[65vh]"
+            className="nashik-surface animate-enter-scale animate-stagger-3 rounded-xl p-3 min-h-[65vh]"
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => onDrop(e, column.key)}
           >
@@ -103,7 +103,7 @@ export default function TaskBoardPage({ complaints, onDropStatus, onAssign, onBu
                   key={complaint._id}
                   draggable
                   onDragStart={(event) => onDragStart(event, complaint._id)}
-                  className="card-lift bg-[rgba(11,25,21,0.86)] rounded-md p-3 border border-[var(--nashik-border)] shadow-sm cursor-grab"
+                  className="card-lift animate-strong-glow bg-[rgba(11,25,21,0.86)] rounded-md p-3 border border-[var(--nashik-border)] shadow-sm cursor-grab"
                 >
                   <div className="flex items-start gap-2">
                     <input type="checkbox" checked={selectedIds.includes(complaint._id)} onChange={() => toggleSelect(complaint._id)} />
