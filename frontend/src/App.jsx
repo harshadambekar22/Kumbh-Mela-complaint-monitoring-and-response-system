@@ -57,10 +57,16 @@ export default function App() {
 
     const init = async () => {
       setLoading(true);
-      await Promise.all([fetchComplaints(filters), refreshDashboard()]);
-      const views = await getSavedViews();
-      setSavedViews(views);
-      setLoading(false);
+      try {
+        // Keep dashboard usable even when one endpoint is temporarily unavailable.
+        await Promise.allSettled([fetchComplaints(filters), refreshDashboard()]);
+        const views = await getSavedViews();
+        setSavedViews(Array.isArray(views) ? views : []);
+      } catch (_error) {
+        setSavedViews([]);
+      } finally {
+        setLoading(false);
+      }
     };
 
     init();
