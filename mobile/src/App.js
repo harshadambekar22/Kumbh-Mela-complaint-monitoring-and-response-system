@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import AuthScreen from "./screens/AuthScreen";
 import DashboardScreen from "./screens/DashboardScreen";
@@ -23,7 +23,31 @@ const TAB_ICON = {
   Profile: "person",
 };
 
-function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refreshData }) {
+class AppErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <View style={styles.crashWrap}>
+          <Text style={styles.crashTitle}>Something went wrong</Text>
+          <Text style={styles.crashText}>Please close and reopen the app.</Text>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refreshData, refreshing }) {
+  const { width } = useWindowDimensions();
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({
@@ -31,8 +55,9 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
         headerTitleStyle: { fontWeight: "700" },
         tabBarActiveTintColor: "#ea580c",
         tabBarInactiveTintColor: "#64748b",
-        tabBarStyle: { height: 66, paddingBottom: 8, paddingTop: 8, backgroundColor: "#fff", borderTopColor: "#fed7aa" },
+        tabBarStyle: { height: width < 360 ? 62 : 66, paddingBottom: 8, paddingTop: 8, backgroundColor: "#fff", borderTopColor: "#fed7aa" },
         tabBarLabelStyle: { fontSize: 11, fontWeight: "700" },
+        tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size, focused }) => (
           <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
             <Ionicons
@@ -46,7 +71,7 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
     >
       <Tabs.Screen
         name="Dashboard"
-        children={() => <DashboardScreen complaints={complaints} analytics={analytics} />}
+        children={() => <DashboardScreen complaints={complaints} analytics={analytics} loading={refreshing && !analytics} />}
         options={{
           headerRight: () => (
             <Pressable onPress={refreshData} style={styles.refreshBtn}>
@@ -61,7 +86,7 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
       <Tabs.Screen
         name="Profile"
         children={() => (
-          <View style={styles.profileContainer}>
+          <ScrollView contentContainerStyle={styles.profileContainer}>
             <View style={styles.profileTopBanner}>
               <Text style={styles.profileTopTitle}>Field Operations Profile</Text>
               <Text style={styles.profileTopSub}>Realtime command access and rapid response controls</Text>
@@ -72,7 +97,7 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
               </View>
               <Text style={styles.profileName}>{user?.name}</Text>
               <Text style={styles.profileEmail}>{user?.email}</Text>
-              <Text style={styles.profileRole}>{user?.role}</Text>
+              <Text style={styles.profileRole}>{String(user?.role || "").split("_").join(" ").toUpperCase()}</Text>
 
               <View style={styles.quickRow}>
                 <View style={styles.quickChip}><Text style={styles.quickChipText}>Secure Login</Text></View>
@@ -84,7 +109,7 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
                 <Text style={styles.logoutText}>Logout</Text>
               </Pressable>
             </View>
-          </View>
+          </ScrollView>
         )}
       />
     </Tabs.Navigator>
@@ -164,33 +189,36 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
-      <StatusBar style="dark" />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!auth ? (
-          <Stack.Screen name="Auth" children={() => <AuthScreen onLogin={onLogin} onRegister={onRegister} busy={authBusy} />} />
-        ) : (
-          <Stack.Screen
-            name="Home"
-            children={() => (
-              <HomeTabs
-                user={auth.user}
-                onLogout={onLogout}
-                complaints={complaints}
-                analytics={analytics}
-                onStatusUpdate={onStatusUpdate}
-                refreshData={refreshData}
-              />
-            )}
-          />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppErrorBoundary>
+      <NavigationContainer>
+        <StatusBar style="dark" />
+        <Stack.Navigator screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}>
+          {!auth ? (
+            <Stack.Screen name="Auth" children={() => <AuthScreen onLogin={onLogin} onRegister={onRegister} busy={authBusy} />} />
+          ) : (
+            <Stack.Screen
+              name="Home"
+              children={() => (
+                <HomeTabs
+                  user={auth.user}
+                  onLogout={onLogout}
+                  complaints={complaints}
+                  analytics={analytics}
+                  onStatusUpdate={onStatusUpdate}
+                  refreshData={refreshData}
+                refreshing={refreshing}
+                />
+              )}
+            />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppErrorBoundary>
   );
 }
 
 const styles = StyleSheet.create({
-  profileContainer: { flex: 1, backgroundColor: "#fff7ed", padding: 16 },
+  profileContainer: { flexGrow: 1, backgroundColor: "#fff7ed", padding: 16, paddingBottom: 110 },
   profileTopBanner: {
     marginTop: 16,
     borderRadius: 16,
@@ -226,9 +254,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fed7aa",
   },
-  profileName: { fontSize: 22, fontWeight: "800", color: "#0f172a" },
-  profileEmail: { marginTop: 6, color: "#475569" },
-  profileRole: { marginTop: 4, color: "#64748b", textTransform: "uppercase", fontSize: 12 },
+  profileName: { fontSize: 22, fontWeight: "800", color: "#0f172a", textAlign: "center", width: "100%" },
+  profileEmail: { marginTop: 6, color: "#475569", textAlign: "center", width: "100%", flexWrap: "wrap" },
+  profileRole: { marginTop: 4, color: "#64748b", fontSize: 12, textAlign: "center", width: "100%" },
   quickRow: { flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "center", marginTop: 12 },
   quickChip: {
     borderRadius: 999,
@@ -260,4 +288,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   tabIconWrapActive: { backgroundColor: "#ffedd5" },
+  crashWrap: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff7ed", padding: 24 },
+  crashTitle: { fontSize: 22, fontWeight: "800", color: "#0f172a", marginBottom: 8, textAlign: "center" },
+  crashText: { fontSize: 14, color: "#475569", textAlign: "center" },
 });

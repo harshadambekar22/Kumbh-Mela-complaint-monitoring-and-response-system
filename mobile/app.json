@@ -2,9 +2,9 @@
   "expo": {
     "name": "Kumbh Complaint Mobile",
     "slug": "kumbh-complaint-mobile",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
-    "icon": "./assets/kumbh-icon.png",
+    "icon": "./assets/kumbh-app-icon-v4.png",
     "userInterfaceStyle": "light",
     "assetBundlePatterns": [
       "**/*"
@@ -15,9 +15,9 @@
     },
     "android": {
       "package": "com.kumbh.complaintmobile",
-      "versionCode": 1,
+      "versionCode": 4,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/kumbh-icon.png",
+        "foregroundImage": "./assets/kumbh-app-icon-v4.png",
         "backgroundColor": "#f58426"
       },
       "permissions": [

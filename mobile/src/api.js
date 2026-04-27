@@ -1,9 +1,9 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Default to localhost for physical Android device with `adb reverse`.
-// Override with EXPO_PUBLIC_API_URL for LAN/Wi-Fi runs.
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://127.0.0.1:5000";
+// Default to deployed backend for Expo Go / APK reliability.
+// Override with EXPO_PUBLIC_API_URL for LAN/Wi-Fi or custom environments.
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://kumbh-backend-tlo1.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,

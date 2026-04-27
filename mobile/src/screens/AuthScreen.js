@@ -1,13 +1,30 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, ImageBackground, ActivityIndicator, Animated } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  ImageBackground,
+  ActivityIndicator,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  Image,
+} from "react-native";
 
 const BG_IMAGES = [
-  "https://images.unsplash.com/photo-1524492449090-1f0f25c00b7b?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1532375810709-75b1da00537c?auto=format&fit=crop&w=1400&q=80",
-  "https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?auto=format&fit=crop&w=1400&q=80",
+  "https://images.unsplash.com/photo-1593696954577-ab3d39317b97?auto=format&fit=crop&w=1600&q=80",
+  "https://images.unsplash.com/photo-1514222134-b57cbb8ce073?auto=format&fit=crop&w=1600&q=80",
+  "https://images.unsplash.com/photo-1528715471579-d1bcf0ba5e83?auto=format&fit=crop&w=1600&q=80",
 ];
 
 export default function AuthScreen({ onLogin, onRegister, busy = false }) {
+  const { width, height } = useWindowDimensions();
   const [bgIdx, setBgIdx] = useState(0);
   const [bgFailed, setBgFailed] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -37,6 +54,14 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
     return () => clearInterval(timer);
   }, [fadeAnim]);
 
+  useEffect(() => {
+    BG_IMAGES.forEach((img) => {
+      if (typeof img === "string") {
+        Image.prefetch(img).catch(() => null);
+      }
+    });
+  }, []);
+
   const submit = async () => {
     setError("");
     try {
@@ -47,7 +72,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
         setMode("login");
       }
     } catch (e) {
-      setError(e?.response?.data?.message || "Request failed");
+      setError(e?.response?.data?.message || e?.message || "Request failed");
     }
   };
 
@@ -58,73 +83,78 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
           source={bgFailed ? require("../../assets/kumbh-login-fallback.png") : { uri: BG_IMAGES[bgIdx] }}
           onError={() => setBgFailed(true)}
           style={styles.bg}
+          resizeMode="cover"
         >
           <View style={styles.overlay} />
         </ImageBackground>
       </Animated.View>
 
-      <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.infoBanner}>
-          <Text style={styles.infoTitle}>Kumbh Mela Response Grid</Text>
-          <Text style={styles.infoSub}>AI-driven grievance intelligence for faster public service action.</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.title}>Kumbh Complaint Mobile</Text>
-          <Text style={styles.subtitle}>{mode === "login" ? "Sign in" : "Create account"}</Text>
-          <View style={styles.dotRow}>
-            {BG_IMAGES.map((_, idx) => (
-              <View key={idx} style={[styles.dot, idx === bgIdx && styles.dotActive]} />
-            ))}
-          </View>
-
-          {mode === "register" && (
-            <>
-              <TextInput placeholder="Name" value={name} onChangeText={setName} style={styles.input} placeholderTextColor="#64748b" />
-              <View style={styles.roleWrap}>
-                <Pressable
-                  onPress={() => setRole("operator")}
-                  style={[styles.roleChip, role === "operator" && styles.roleChipActive]}
-                >
-                  <Text style={[styles.roleChipText, role === "operator" && styles.roleChipTextActive]}>Operator</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => setRole("department_officer")}
-                  style={[styles.roleChip, role === "department_officer" && styles.roleChipActive]}
-                >
-                  <Text style={[styles.roleChipText, role === "department_officer" && styles.roleChipTextActive]}>Department Officer</Text>
-                </Pressable>
+      <KeyboardAvoidingView style={styles.bg} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={24}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView contentContainerStyle={[styles.container, { paddingHorizontal: Math.max(16, width * 0.05), minHeight: height }]} keyboardShouldPersistTaps="handled">
+            <View style={[styles.infoBanner, { marginTop: Math.max(8, height * 0.03) }]}>
+              <Text style={[styles.infoTitle, { fontSize: width < 360 ? 24 : 26 }]}>Kumbh Mela Response Grid</Text>
+              <Text style={styles.infoSub}>AI-driven grievance intelligence for faster public service action.</Text>
+            </View>
+            <Animated.View style={[styles.card, { padding: width < 360 ? 14 : 18, transform: [{ translateY: fadeAnim.interpolate({ inputRange: [0.25, 1], outputRange: [8, 0] }) }] }]}>
+              <Text style={[styles.title, { fontSize: width < 360 ? 18 : 22 }]}>Kumbh Complaint Mobile</Text>
+              <Text style={styles.subtitle}>{mode === "login" ? "Sign in" : "Create account"}</Text>
+              <View style={styles.dotRow}>
+                {BG_IMAGES.map((_, idx) => (
+                  <View key={idx} style={[styles.dot, idx === bgIdx && styles.dotActive]} />
+                ))}
               </View>
-              <TextInput
-                placeholder="Department (optional)"
-                value={department}
-                onChangeText={setDepartment}
-                style={styles.input}
-                placeholderTextColor="#64748b"
-              />
-            </>
-          )}
 
-          <TextInput placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" style={styles.input} placeholderTextColor="#64748b" />
-          <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} placeholderTextColor="#64748b" />
+              {mode === "register" && (
+                <>
+                  <TextInput placeholder="Name" value={name} onChangeText={setName} style={styles.input} placeholderTextColor="#64748b" />
+                  <View style={styles.roleWrap}>
+                    <Pressable
+                      onPress={() => setRole("operator")}
+                      style={[styles.roleChip, role === "operator" && styles.roleChipActive]}
+                    >
+                      <Text style={[styles.roleChipText, role === "operator" && styles.roleChipTextActive]}>Operator</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setRole("department_officer")}
+                      style={[styles.roleChip, role === "department_officer" && styles.roleChipActive]}
+                    >
+                      <Text style={[styles.roleChipText, role === "department_officer" && styles.roleChipTextActive]}>Department Officer</Text>
+                    </Pressable>
+                  </View>
+                  <TextInput
+                    placeholder="Department (optional)"
+                    value={department}
+                    onChangeText={setDepartment}
+                    style={styles.input}
+                    placeholderTextColor="#64748b"
+                  />
+                </>
+              )}
 
-          {!!error && <Text style={styles.error}>{error}</Text>}
+              <TextInput placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" style={styles.input} placeholderTextColor="#64748b" />
+              <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} placeholderTextColor="#64748b" />
 
-          <Pressable
-            style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryPressed, busy && styles.buttonDisabled]}
-            onPress={submit}
-            disabled={busy}
-          >
-            {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryText}>{mode === "login" ? "Login" : "Create Account"}</Text>}
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
-            onPress={() => setMode((m) => (m === "login" ? "register" : "login"))}
-            disabled={busy}
-          >
-            <Text style={styles.secondaryText}>{mode === "login" ? "Create new account" : "Back to login"}</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+              {!!error && <Text style={styles.error}>{error}</Text>}
+
+              <Pressable
+                style={({ pressed }) => [styles.primaryButton, pressed && styles.primaryPressed, busy && styles.buttonDisabled]}
+                onPress={submit}
+                disabled={busy}
+              >
+                {busy ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryText}>{mode === "login" ? "Login" : "Create Account"}</Text>}
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.secondaryPressed]}
+                onPress={() => setMode((m) => (m === "login" ? "register" : "login"))}
+                disabled={busy}
+              >
+                <Text style={styles.secondaryText}>{mode === "login" ? "Create new account" : "Back to login"}</Text>
+              </Pressable>
+            </Animated.View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -132,7 +162,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,6,23,0.22)" },
-  container: { flexGrow: 1, justifyContent: "center", padding: 20 },
+  container: { flexGrow: 1, justifyContent: "center", paddingVertical: 16 },
   infoBanner: {
     borderRadius: 14,
     backgroundColor: "rgba(15,23,42,0.62)",
@@ -141,7 +171,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
   },
-  infoTitle: { color: "#fff", fontSize: 16, fontWeight: "800" },
+  infoTitle: { color: "#fff", fontWeight: "800" },
   infoSub: { color: "#e2e8f0", fontSize: 12, marginTop: 3 },
   card: {
     backgroundColor: "rgba(255,255,255,0.97)",
@@ -158,7 +188,7 @@ const styles = StyleSheet.create({
   dotRow: { flexDirection: "row", gap: 6, marginBottom: 10 },
   dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#cbd5e1" },
   dotActive: { width: 16, backgroundColor: "#f97316" },
-  title: { fontSize: 26, fontWeight: "900", color: "#0f172a" },
+  title: { fontWeight: "900", color: "#0f172a" },
   subtitle: { fontSize: 14, color: "#475569", marginBottom: 14 },
   input: {
     backgroundColor: "#fff",

@@ -9,7 +9,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.1.1:5000"
+        "EXPO_PUBLIC_API_URL": "https://kumbh-backend-tlo1.onrender.com"
       }
     },
     "public-apk": {
