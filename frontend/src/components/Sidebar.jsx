@@ -13,13 +13,13 @@ export default function Sidebar({ user, onLogout }) {
   });
 
   return (
-    <aside className="w-72 min-h-screen bg-slate-950/95 text-white p-6 border-r border-slate-800">
-      <h1 className="text-xl font-extrabold mb-2 leading-snug">AI Complaint Task System</h1>
-      <p className="text-xs text-slate-300 mb-8">Kumbh Mela Command Operations</p>
+    <aside className="w-full md:w-72 md:min-h-screen nashik-surface md:rounded-none rounded-b-2xl p-4 md:p-6 border-r md:border-r border-b md:border-b-0 border-[var(--nashik-border)]">
+      <h1 className="nashik-title text-xl font-extrabold mb-2 leading-snug">AI Complaint Task System</h1>
+      <p className="text-xs nashik-subtitle mb-6">Kumbh Mela Command Operations</p>
 
-      <div className="mb-6 rounded-xl border border-slate-700 bg-slate-900 p-3 text-xs">
-        <p className="font-semibold text-slate-100">{user?.name}</p>
-        <p className="text-slate-400 uppercase tracking-wide">{user?.role}</p>
+      <div className="mb-5 rounded-xl border border-[var(--nashik-border)] bg-[rgba(11,25,21,0.8)] p-3 text-xs">
+        <p className="font-semibold text-[var(--nashik-text)]">{user?.name}</p>
+        <p className="text-[var(--nashik-text-dim)] uppercase tracking-wide">{user?.role}</p>
       </div>
 
       <nav className="space-y-2">
@@ -29,7 +29,9 @@ export default function Sidebar({ user, onLogout }) {
             to={link.to}
             className={({ isActive }) =>
               `block rounded-lg px-4 py-2.5 text-sm transition card-lift ${
-                isActive ? "bg-orange-500 text-white" : "bg-slate-900 text-slate-100 hover:bg-slate-800"
+                isActive
+                  ? "bg-[linear-gradient(135deg,#4a6b10,#6b8c2a,#c8a832)] text-[#08110b]"
+                  : "bg-[rgba(15,35,28,0.9)] text-[var(--nashik-text)] hover:bg-[rgba(26,52,37,0.95)]"
               }`
             }
           >
@@ -38,12 +40,12 @@ export default function Sidebar({ user, onLogout }) {
         ))}
       </nav>
 
-      <button onClick={onLogout} className="mt-6 w-full rounded-lg bg-slate-700 px-3 py-2.5 text-sm hover:bg-slate-600">
+      <button onClick={onLogout} className="mt-6 w-full rounded-lg bg-[rgba(255,245,196,0.15)] border border-[var(--nashik-border)] px-3 py-2.5 text-sm text-[var(--nashik-text)] hover:bg-[rgba(255,245,196,0.2)]">
         Logout
       </button>
 
-      <div className="mt-8 rounded-xl border border-slate-700 bg-slate-900 p-3 text-xs text-slate-300">
-        <p className="font-semibold text-slate-100 mb-1">Live Control Tip</p>
+      <div className="mt-8 rounded-xl border border-[var(--nashik-border)] bg-[rgba(11,25,21,0.8)] p-3 text-xs text-[var(--nashik-text-dim)]">
+        <p className="font-semibold text-[var(--nashik-text)] mb-1">Live Control Tip</p>
         <p>Use filters + map together to isolate urgent crowd complaints faster.</p>
       </div>
     </aside>

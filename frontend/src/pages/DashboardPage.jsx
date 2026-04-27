@@ -14,8 +14,8 @@ ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Le
 
 function StatCard({ title, value, accent }) {
   return (
-    <div className="card-lift rounded-xl border border-white/70 bg-white/80 p-4 shadow-sm">
-      <p className="text-xs uppercase tracking-wide text-slate-500">{title}</p>
+    <div className="card-lift nashik-surface-soft p-4">
+      <p className="text-xs uppercase tracking-wide nashik-subtitle">{title}</p>
       <p className={`text-3xl font-black ${accent}`}>{value}</p>
     </div>
   );
@@ -62,7 +62,7 @@ export default function DashboardPage({ complaints, analytics, alerts }) {
       {!!alerts?.length && (
         <div className="space-y-2">
           {alerts.map((alert, idx) => (
-            <div key={`${alert.type}-${idx}`} className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div key={`${alert.type}-${idx}`} className="rounded-xl border border-red-400/40 bg-red-900/20 px-3 py-2 text-sm text-red-300">
               <strong>{alert.type}</strong>: {alert.count} active items ({alert.severity})
             </div>
           ))}
@@ -70,41 +70,41 @@ export default function DashboardPage({ complaints, analytics, alerts }) {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatCard title="Total Complaints" value={stats.total} accent="text-slate-900" />
-        <StatCard title="High Priority" value={stats.high} accent="text-red-600" />
-        <StatCard title="Resolved" value={stats.resolved} accent="text-emerald-600" />
-        <StatCard title="In Progress" value={stats.progress} accent="text-amber-600" />
+        <StatCard title="Total Complaints" value={stats.total} accent="text-[var(--nashik-text)]" />
+        <StatCard title="High Priority" value={stats.high} accent="text-red-300" />
+        <StatCard title="Resolved" value={stats.resolved} accent="text-emerald-300" />
+        <StatCard title="In Progress" value={stats.progress} accent="text-amber-300" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {PHOTO_STRIP.map((src, idx) => (
-          <img key={idx} src={src} alt="Kumbh event" className="card-lift h-36 w-full rounded-xl object-cover" />
+          <img key={idx} src={src} alt="Kumbh event" className="card-lift h-36 w-full rounded-xl object-cover border border-[var(--nashik-border)]" />
         ))}
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div className="kumbh-glass rounded-xl border border-white/70 p-4 shadow-sm">
-          <h2 className="font-semibold mb-4">Complaints by Category</h2>
+        <div className="nashik-surface p-4">
+          <h2 className="nashik-title font-semibold mb-4">Complaints by Category</h2>
           <Bar data={categoryData} />
         </div>
 
-        <div className="kumbh-glass rounded-xl border border-white/70 p-4 shadow-sm">
-          <h2 className="font-semibold mb-4">Complaints by Status</h2>
+        <div className="nashik-surface p-4">
+          <h2 className="nashik-title font-semibold mb-4">Complaints by Status</h2>
           <div className="max-w-sm mx-auto">
             <Pie data={statusData} />
           </div>
         </div>
       </div>
 
-      <div className="kumbh-glass rounded-xl border border-white/70 p-4 shadow-sm">
-        <h2 className="font-semibold mb-3">Department Performance</h2>
+      <div className="nashik-surface p-4">
+        <h2 className="nashik-title font-semibold mb-3">Department Performance</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {(analytics?.departmentPerformance || []).map((row) => (
-            <div key={row.department} className="card-lift rounded-xl border border-white/80 bg-white/90 p-3">
-              <p className="font-semibold text-sm">{row.department}</p>
-              <p className="text-xs text-slate-600">Total: {row.total}</p>
-              <p className="text-xs text-slate-600">Resolved: {row.resolved}</p>
-              <p className="text-xs text-slate-600">Resolution Rate: {row.resolutionRate}%</p>
+            <div key={row.department} className="card-lift nashik-surface-soft p-3">
+              <p className="font-semibold text-sm text-[var(--nashik-text)]">{row.department}</p>
+              <p className="text-xs nashik-subtitle">Total: {row.total}</p>
+              <p className="text-xs nashik-subtitle">Resolved: {row.resolved}</p>
+              <p className="text-xs nashik-subtitle">Resolution Rate: {row.resolutionRate}%</p>
             </div>
           ))}
         </div>

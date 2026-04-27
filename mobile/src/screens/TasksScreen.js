@@ -1,3 +1,92 @@
+import React, { useMemo } from "react";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { colors, radii, shadows } from "../theme/tokens";
+
+const columns = [
+  { key: "new", label: "New" },
+  { key: "assigned", label: "Assigned" },
+  { key: "in-progress", label: "In Progress" },
+  { key: "resolved", label: "Resolved" },
+];
+
+const nextStatus = {
+  new: "assigned",
+  assigned: "in-progress",
+  "in-progress": "resolved",
+};
+
+export default function TasksScreen({ complaints, onStatusUpdate }) {
+  const grouped = useMemo(() => {
+    const list = Array.isArray(complaints) ? complaints : [];
+    return columns.reduce((acc, c) => {
+      acc[c.key] = list.filter((x) => x.status === c.key);
+      return acc;
+    }, {});
+  }, [complaints]);
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Task Board</Text>
+      <Text style={styles.sub}>Manage live complaints by workflow stage.</Text>
+      {columns.map((column) => (
+        <View key={column.key} style={styles.column}>
+          <Text style={styles.columnTitle}>{column.label}</Text>
+          {(grouped[column.key] || []).slice(0, 20).map((item) => (
+            <View key={item._id} style={styles.card}>
+              <Text style={styles.cardText} numberOfLines={2}>{item.text || "No complaint text"}</Text>
+              <Text style={styles.meta}>{item.locationName || "Unknown location"}</Text>
+              <Text style={styles.meta}>Priority: {item.priority || "low"}</Text>
+              {nextStatus[item.status] ? (
+                <Pressable onPress={() => onStatusUpdate?.(item._id, nextStatus[item.status])} style={styles.action}>
+                  <Text style={styles.actionText}>Move to {nextStatus[item.status]}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ))}
+          {(grouped[column.key] || []).length === 0 ? <Text style={styles.empty}>No complaints in this stage.</Text> : null}
+        </View>
+      ))}
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { padding: 14, backgroundColor: colors.bg, paddingBottom: 100 },
+  title: { color: colors.gold, fontWeight: "800", fontSize: 20 },
+  sub: { color: colors.textDim, marginTop: 2, marginBottom: 10 },
+  column: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    padding: 10,
+    marginBottom: 10,
+    ...shadows.card,
+  },
+  columnTitle: { color: colors.text, fontWeight: "700", marginBottom: 8 },
+  card: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radii.sm,
+    backgroundColor: colors.surfaceAlt,
+    padding: 10,
+    marginBottom: 8,
+  },
+  cardText: { color: colors.text, fontSize: 13, marginBottom: 4 },
+  meta: { color: colors.textDim, fontSize: 11 },
+  action: {
+    marginTop: 8,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: "rgba(232,192,64,0.85)",
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  actionText: { color: "#13210d", fontWeight: "700", fontSize: 11 },
+  empty: { color: colors.textDim, fontSize: 12, fontStyle: "italic" },
+});
 import React from "react";
 import { View, Text, StyleSheet, FlatList, Pressable } from "react-native";
 

@@ -23,7 +23,7 @@ export default function KumbhHero({ title, subtitle }) {
   }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl shadow-xl">
+    <div className="relative overflow-hidden rounded-2xl shadow-xl border border-[var(--nashik-border)]">
       <img
         src={src}
         alt=""
@@ -32,14 +32,14 @@ export default function KumbhHero({ title, subtitle }) {
       />
       <div className="kumbh-hero-overlay absolute inset-0" />
       <div className="absolute inset-0 flex flex-col justify-end p-5 text-white">
-        <h1 className="text-2xl font-extrabold tracking-tight">{title}</h1>
-        <p className="text-sm text-slate-100 max-w-2xl">{subtitle}</p>
+        <h1 className="text-2xl font-extrabold tracking-tight nashik-title">{title}</h1>
+        <p className="text-sm text-[var(--nashik-text)] max-w-2xl">{subtitle}</p>
         <div className="mt-3 flex gap-2">
           {PHOTOS.map((_, i) => (
             <button
               key={i}
               onClick={() => setIdx(i)}
-              className={`h-2.5 w-8 rounded-full ${i === idx ? "bg-orange-400" : "bg-white/50 hover:bg-white/70"}`}
+              className={`h-2.5 w-8 rounded-full ${i === idx ? "bg-[var(--nashik-gold)]" : "bg-white/40 hover:bg-white/60"}`}
               aria-label={`Hero photo ${i + 1}`}
             />
           ))}

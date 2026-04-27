@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { colors, radii, shadows } from "../theme/tokens";
 
-export default function StatCard({ title, value, color = "#0f172a" }) {
+export default function StatCard({ title, value, color = colors.text }) {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
@@ -13,24 +14,20 @@ export default function StatCard({ title, value, color = "#0f172a" }) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
+    backgroundColor: colors.surfaceAlt,
+    borderRadius: radii.lg,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    borderColor: colors.border,
+    ...shadows.card,
   },
-  title: { fontSize: 12, color: "#64748b", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.7 },
+  title: { fontSize: 12, color: colors.textDim, marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.7 },
   value: { fontSize: 26, fontWeight: "800" },
   pulseLine: {
     marginTop: 10,
     height: 4,
     borderRadius: 4,
     width: "72%",
-    backgroundColor: "#fdba74",
+    backgroundColor: colors.gold,
   },
 });

@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import { WebView } from "react-native-webview";
+import { colors, radii, shadows } from "../theme/tokens";
 
 const GEOFENCES = [
   { id: "panchavati", name: "Panchavati", latitude: 20.0102, longitude: 73.7987, radius: 800 },
@@ -54,7 +55,8 @@ export default function MapScreen({ complaints }) {
     .leaflet-container{font:12px sans-serif;}
     .legend {
       position: absolute; right: 10px; top: 10px; z-index: 999;
-      background: rgba(15,23,42,0.88); color: #fff; border-radius: 10px; padding: 8px;
+      background: rgba(8,17,13,0.9); color: #fff5c4; border-radius: 10px; padding: 8px;
+      border: 1px solid rgba(232,192,64,0.3);
       min-width: 120px; font-size: 11px;
     }
     .dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:6px; }
@@ -119,29 +121,32 @@ export default function MapScreen({ complaints }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f8fafc" },
+  container: { flex: 1, backgroundColor: colors.bg },
   map: { flex: 1 },
   summaryCard: {
     position: "absolute",
     left: 12,
     right: 12,
     bottom: 18,
-    borderRadius: 14,
-    backgroundColor: "rgba(255,255,255,0.92)",
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     padding: 12,
     borderWidth: 1,
-    borderColor: "#e2e8f0",
+    borderColor: colors.border,
+    ...shadows.card,
   },
-  summaryTitle: { fontWeight: "800", color: "#0f172a", marginBottom: 4 },
+  summaryTitle: { fontWeight: "800", color: colors.gold, marginBottom: 4 },
   topRow: { marginBottom: 6 },
   controlsRow: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
   modeBtn: {
-    backgroundColor: "#ea580c",
-    borderRadius: 999,
+    backgroundColor: "rgba(232,192,64,0.22)",
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.border,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  modeBtnActive: { backgroundColor: "#c2410c" },
-  modeBtnText: { color: "#fff", fontSize: 11, fontWeight: "700" },
-  summaryText: { fontSize: 12, color: "#475569" },
+  modeBtnActive: { backgroundColor: "rgba(232,192,64,0.35)" },
+  modeBtnText: { color: colors.text, fontSize: 11, fontWeight: "700" },
+  summaryText: { fontSize: 12, color: colors.textDim },
 });

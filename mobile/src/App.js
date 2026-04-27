@@ -11,6 +11,7 @@ import DashboardScreen from "./screens/DashboardScreen";
 import MapScreen from "./screens/MapScreen";
 import TasksScreen from "./screens/TasksScreen";
 import { getAnalyticsSummary, getComplaints, login, register, updateComplaintStatus, warmUpServer } from "./api";
+import { colors, radii, shadows } from "./theme/tokens";
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -51,11 +52,12 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({
-        headerStyle: { backgroundColor: "#fff7ed" },
-        headerTitleStyle: { fontWeight: "700" },
-        tabBarActiveTintColor: "#ea580c",
-        tabBarInactiveTintColor: "#64748b",
-        tabBarStyle: { height: width < 360 ? 62 : 66, paddingBottom: 8, paddingTop: 8, backgroundColor: "#fff", borderTopColor: "#fed7aa" },
+        headerStyle: { backgroundColor: colors.bgSoft },
+        headerTitleStyle: { fontWeight: "700", color: colors.gold },
+        headerTintColor: colors.gold,
+        tabBarActiveTintColor: colors.gold,
+        tabBarInactiveTintColor: colors.textDim,
+        tabBarStyle: { height: width < 360 ? 62 : 66, paddingBottom: 8, paddingTop: 8, backgroundColor: colors.bgSoft, borderTopColor: colors.border },
         tabBarLabelStyle: { fontSize: 11, fontWeight: "700" },
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size, focused }) => (
@@ -191,7 +193,7 @@ export default function App() {
   return (
     <AppErrorBoundary>
       <NavigationContainer>
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
         <Stack.Navigator screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}>
           {!auth ? (
             <Stack.Screen name="Auth" children={() => <AuthScreen onLogin={onLogin} onRegister={onRegister} busy={authBusy} />} />
@@ -218,60 +220,56 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  profileContainer: { flexGrow: 1, backgroundColor: "#fff7ed", padding: 16, paddingBottom: 110 },
+  profileContainer: { flexGrow: 1, backgroundColor: colors.bg, padding: 16, paddingBottom: 110 },
   profileTopBanner: {
     marginTop: 16,
-    borderRadius: 16,
-    backgroundColor: "#0f172a",
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     padding: 14,
     borderWidth: 1,
-    borderColor: "#334155",
+    borderColor: colors.border,
     marginBottom: 14,
   },
-  profileTopTitle: { color: "#fff", fontSize: 16, fontWeight: "800" },
-  profileTopSub: { color: "#cbd5e1", fontSize: 12, marginTop: 4 },
+  profileTopTitle: { color: colors.gold, fontSize: 16, fontWeight: "800" },
+  profileTopSub: { color: colors.text, fontSize: 12, marginTop: 4 },
   profileCard: {
-    borderRadius: 18,
-    backgroundColor: "#fff",
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#fed7aa",
+    borderColor: colors.border,
     padding: 18,
     alignItems: "center",
-    shadowColor: "#0f172a",
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    ...shadows.card,
   },
   avatarCircle: {
     width: 86,
     height: 86,
     borderRadius: 43,
-    backgroundColor: "#fff",
+    backgroundColor: colors.surfaceAlt,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
     borderWidth: 2,
-    borderColor: "#fed7aa",
+    borderColor: colors.border,
   },
-  profileName: { fontSize: 22, fontWeight: "800", color: "#0f172a", textAlign: "center", width: "100%" },
-  profileEmail: { marginTop: 6, color: "#475569", textAlign: "center", width: "100%", flexWrap: "wrap" },
-  profileRole: { marginTop: 4, color: "#64748b", fontSize: 12, textAlign: "center", width: "100%" },
+  profileName: { fontSize: 22, fontWeight: "800", color: colors.text, textAlign: "center", width: "100%" },
+  profileEmail: { marginTop: 6, color: colors.textDim, textAlign: "center", width: "100%", flexWrap: "wrap" },
+  profileRole: { marginTop: 4, color: colors.textDim, fontSize: 12, textAlign: "center", width: "100%" },
   quickRow: { flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "center", marginTop: 12 },
   quickChip: {
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: "#fdba74",
-    backgroundColor: "#fff7ed",
+    borderColor: colors.border,
+    backgroundColor: "rgba(232,192,64,0.2)",
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  quickChipText: { color: "#9a3412", fontSize: 11, fontWeight: "700" },
-  logoutBtn: { marginTop: 18, backgroundColor: "#0f172a", borderRadius: 12, paddingHorizontal: 18, paddingVertical: 10 },
-  logoutText: { color: "#fff", fontWeight: "700" },
+  quickChipText: { color: colors.text, fontSize: 11, fontWeight: "700" },
+  logoutBtn: { marginTop: 18, backgroundColor: "rgba(232,192,64,0.9)", borderRadius: radii.sm, paddingHorizontal: 18, paddingVertical: 10 },
+  logoutText: { color: "#13210d", fontWeight: "700" },
   refreshBtn: {
     marginRight: 10,
-    backgroundColor: "#ea580c",
+    backgroundColor: "rgba(232,192,64,0.85)",
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -279,7 +277,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4,
   },
-  refreshText: { color: "white", fontSize: 12, fontWeight: "700" },
+  refreshText: { color: "#13210d", fontSize: 12, fontWeight: "700" },
   tabIconWrap: {
     width: 34,
     height: 26,
@@ -287,8 +285,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  tabIconWrapActive: { backgroundColor: "#ffedd5" },
-  crashWrap: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff7ed", padding: 24 },
-  crashTitle: { fontSize: 22, fontWeight: "800", color: "#0f172a", marginBottom: 8, textAlign: "center" },
-  crashText: { fontSize: 14, color: "#475569", textAlign: "center" },
+  tabIconWrapActive: { backgroundColor: "rgba(232,192,64,0.22)" },
+  crashWrap: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.bg, padding: 24 },
+  crashTitle: { fontSize: 22, fontWeight: "800", color: colors.gold, marginBottom: 8, textAlign: "center" },
+  crashText: { fontSize: 14, color: colors.textDim, textAlign: "center" },
 });

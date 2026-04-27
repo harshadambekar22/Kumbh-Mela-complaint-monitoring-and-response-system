@@ -16,6 +16,7 @@ import {
   useWindowDimensions,
   Image,
 } from "react-native";
+import { colors, motion, radii, shadows } from "../theme/tokens";
 
 const BG_IMAGES = [
   "https://images.unsplash.com/photo-1593696954577-ab3d39317b97?auto=format&fit=crop&w=1600&q=80",
@@ -26,8 +27,14 @@ const BG_IMAGES = [
 export default function AuthScreen({ onLogin, onRegister, busy = false }) {
   const { width, height } = useWindowDimensions();
   const [bgIdx, setBgIdx] = useState(0);
+  const [bgAIdx, setBgAIdx] = useState(0);
+  const [bgBIdx, setBgBIdx] = useState(1 % BG_IMAGES.length);
+  const [showBgA, setShowBgA] = useState(true);
   const [bgFailed, setBgFailed] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const bgAOpacity = useRef(new Animated.Value(1)).current;
+  const bgBOpacity = useRef(new Animated.Value(0)).current;
+  const cardLift = useRef(new Animated.Value(0)).current;
+  const [activeField, setActiveField] = useState("");
   const [mode, setMode] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,21 +45,38 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0.25,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => {
-        setBgIdx((prev) => (prev + 1) % BG_IMAGES.length);
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 650,
-          useNativeDriver: true,
-        }).start();
+      setBgIdx((prev) => {
+        const next = (prev + 1) % BG_IMAGES.length;
+        if (showBgA) {
+          setBgBIdx(next);
+          Animated.parallel([
+            Animated.timing(bgAOpacity, { toValue: 0, duration: motion.slow, useNativeDriver: true }),
+            Animated.timing(bgBOpacity, { toValue: 1, duration: motion.slow, useNativeDriver: true }),
+          ]).start(() => {
+            setShowBgA(false);
+          });
+        } else {
+          setBgAIdx(next);
+          Animated.parallel([
+            Animated.timing(bgAOpacity, { toValue: 1, duration: motion.slow, useNativeDriver: true }),
+            Animated.timing(bgBOpacity, { toValue: 0, duration: motion.slow, useNativeDriver: true }),
+          ]).start(() => {
+            setShowBgA(true);
+          });
+        }
+        return next;
       });
-    }, 4200);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [fadeAnim]);
+  }, [bgAOpacity, bgBOpacity, showBgA]);
+
+  useEffect(() => {
+    Animated.timing(cardLift, {
+      toValue: activeField ? 1 : 0,
+      duration: motion.fast,
+      useNativeDriver: true,
+    }).start();
+  }, [activeField, cardLift]);
 
   useEffect(() => {
     BG_IMAGES.forEach((img) => {
@@ -78,9 +102,19 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
 
   return (
     <View style={styles.bg}>
-      <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: fadeAnim }]}>
+      <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: bgAOpacity }]}>
         <ImageBackground
-          source={bgFailed ? require("../../assets/kumbh-login-fallback.png") : { uri: BG_IMAGES[bgIdx] }}
+          source={bgFailed ? require("../../assets/kumbh-login-fallback.png") : { uri: BG_IMAGES[bgAIdx] }}
+          onError={() => setBgFailed(true)}
+          style={styles.bg}
+          resizeMode="cover"
+        >
+          <View style={styles.overlay} />
+        </ImageBackground>
+      </Animated.View>
+      <Animated.View style={[StyleSheet.absoluteFillObject, { opacity: bgBOpacity }]}>
+        <ImageBackground
+          source={bgFailed ? require("../../assets/kumbh-login-fallback.png") : { uri: BG_IMAGES[bgBIdx] }}
           onError={() => setBgFailed(true)}
           style={styles.bg}
           resizeMode="cover"
@@ -96,7 +130,18 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
               <Text style={[styles.infoTitle, { fontSize: width < 360 ? 24 : 26 }]}>Kumbh Mela Response Grid</Text>
               <Text style={styles.infoSub}>AI-driven grievance intelligence for faster public service action.</Text>
             </View>
-            <Animated.View style={[styles.card, { padding: width < 360 ? 14 : 18, transform: [{ translateY: fadeAnim.interpolate({ inputRange: [0.25, 1], outputRange: [8, 0] }) }] }]}>
+            <Animated.View
+              style={[
+                styles.card,
+                {
+                  padding: width < 360 ? 14 : 18,
+                  transform: [
+                    { translateY: cardLift.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }) },
+                    { scale: cardLift.interpolate({ inputRange: [0, 1], outputRange: [1, 1.01] }) },
+                  ],
+                },
+              ]}
+            >
               <Text style={[styles.title, { fontSize: width < 360 ? 18 : 22 }]}>Kumbh Complaint Mobile</Text>
               <Text style={styles.subtitle}>{mode === "login" ? "Sign in" : "Create account"}</Text>
               <View style={styles.dotRow}>
@@ -107,7 +152,17 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
 
               {mode === "register" && (
                 <>
-                  <TextInput placeholder="Name" value={name} onChangeText={setName} style={styles.input} placeholderTextColor="#64748b" />
+                  <Animated.View style={[styles.inputWrap, activeField === "name" && styles.inputWrapActive]}>
+                    <TextInput
+                      placeholder="Name"
+                      value={name}
+                      onChangeText={setName}
+                      onFocus={() => setActiveField("name")}
+                      onBlur={() => setActiveField("")}
+                      style={[styles.input, activeField === "name" && styles.inputActive]}
+                      placeholderTextColor="#64748b"
+                    />
+                  </Animated.View>
                   <View style={styles.roleWrap}>
                     <Pressable
                       onPress={() => setRole("operator")}
@@ -122,18 +177,44 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
                       <Text style={[styles.roleChipText, role === "department_officer" && styles.roleChipTextActive]}>Department Officer</Text>
                     </Pressable>
                   </View>
-                  <TextInput
-                    placeholder="Department (optional)"
-                    value={department}
-                    onChangeText={setDepartment}
-                    style={styles.input}
-                    placeholderTextColor="#64748b"
-                  />
+                  <Animated.View style={[styles.inputWrap, activeField === "department" && styles.inputWrapActive]}>
+                    <TextInput
+                      placeholder="Department (optional)"
+                      value={department}
+                      onChangeText={setDepartment}
+                      onFocus={() => setActiveField("department")}
+                      onBlur={() => setActiveField("")}
+                      style={[styles.input, activeField === "department" && styles.inputActive]}
+                      placeholderTextColor="#64748b"
+                    />
+                  </Animated.View>
                 </>
               )}
 
-              <TextInput placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" style={styles.input} placeholderTextColor="#64748b" />
-              <TextInput placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry style={styles.input} placeholderTextColor="#64748b" />
+              <Animated.View style={[styles.inputWrap, activeField === "email" && styles.inputWrapActive]}>
+                <TextInput
+                  placeholder="Email"
+                  value={email}
+                  onChangeText={setEmail}
+                  onFocus={() => setActiveField("email")}
+                  onBlur={() => setActiveField("")}
+                  autoCapitalize="none"
+                  style={[styles.input, activeField === "email" && styles.inputActive]}
+                  placeholderTextColor="#64748b"
+                />
+              </Animated.View>
+              <Animated.View style={[styles.inputWrap, activeField === "password" && styles.inputWrapActive]}>
+                <TextInput
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  onFocus={() => setActiveField("password")}
+                  onBlur={() => setActiveField("")}
+                  secureTextEntry
+                  style={[styles.input, activeField === "password" && styles.inputActive]}
+                  placeholderTextColor="#64748b"
+                />
+              </Animated.View>
 
               {!!error && <Text style={styles.error}>{error}</Text>}
 
@@ -161,67 +242,71 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
 
 const styles = StyleSheet.create({
   bg: { flex: 1 },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(2,6,23,0.22)" },
+  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(6,13,20,0.46)" },
   container: { flexGrow: 1, justifyContent: "center", paddingVertical: 16 },
   infoBanner: {
-    borderRadius: 14,
-    backgroundColor: "rgba(15,23,42,0.62)",
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
+    borderColor: colors.border,
     padding: 12,
     marginBottom: 12,
   },
-  infoTitle: { color: "#fff", fontWeight: "800" },
-  infoSub: { color: "#e2e8f0", fontSize: 12, marginTop: 3 },
+  infoTitle: { color: colors.gold, fontWeight: "800" },
+  infoSub: { color: colors.text, fontSize: 12, marginTop: 3 },
   card: {
-    backgroundColor: "rgba(255,255,255,0.97)",
-    borderRadius: 18,
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
     padding: 18,
     borderWidth: 1,
-    borderColor: "#fdba74",
-    shadowColor: "#000",
-    shadowOpacity: 0.14,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 8,
+    borderColor: colors.border,
+    ...shadows.card,
   },
   dotRow: { flexDirection: "row", gap: 6, marginBottom: 10 },
-  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#cbd5e1" },
-  dotActive: { width: 16, backgroundColor: "#f97316" },
-  title: { fontWeight: "900", color: "#0f172a" },
-  subtitle: { fontSize: 14, color: "#475569", marginBottom: 14 },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "rgba(229,216,154,0.4)" },
+  dotActive: { width: 16, backgroundColor: colors.gold },
+  title: { fontWeight: "900", color: colors.gold },
+  subtitle: { fontSize: 14, color: colors.textDim, marginBottom: 14 },
   input: {
-    backgroundColor: "#fff",
-    borderColor: "#e2e8f0",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: radii.sm,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    marginBottom: 10,
-    color: "#0f172a",
+    color: colors.text,
+  },
+  inputWrap: { marginBottom: 10 },
+  inputWrapActive: { transform: [{ translateX: 3 }] },
+  inputActive: {
+    borderColor: "rgba(232,192,64,0.72)",
+    shadowColor: colors.gold,
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
   },
   roleWrap: { flexDirection: "row", gap: 8, marginBottom: 10 },
   roleChip: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#cbd5e1",
+    borderColor: colors.border,
     borderRadius: 10,
     paddingVertical: 8,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colors.surfaceAlt,
   },
   roleChipActive: {
-    backgroundColor: "#ffedd5",
-    borderColor: "#fdba74",
+    backgroundColor: "rgba(232,192,64,0.2)",
+    borderColor: "rgba(232,192,64,0.5)",
   },
-  roleChipText: { fontSize: 12, color: "#334155", fontWeight: "600" },
-  roleChipTextActive: { color: "#9a3412" },
-  error: { color: "#dc2626", marginBottom: 8 },
-  primaryButton: { backgroundColor: "#ea580c", borderRadius: 12, paddingVertical: 12, alignItems: "center", marginTop: 4 },
-  primaryPressed: { backgroundColor: "#c2410c" },
+  roleChipText: { fontSize: 12, color: colors.textDim, fontWeight: "600" },
+  roleChipTextActive: { color: colors.text },
+  error: { color: "#fca5a5", marginBottom: 8 },
+  primaryButton: { backgroundColor: "rgba(232,192,64,0.85)", borderRadius: radii.sm, paddingVertical: 12, alignItems: "center", marginTop: 4, borderWidth: 1, borderColor: colors.border },
+  primaryPressed: { backgroundColor: "rgba(232,192,64,0.68)" },
   buttonDisabled: { opacity: 0.7 },
-  primaryText: { color: "#fff", fontWeight: "700" },
-  secondaryButton: { borderRadius: 12, paddingVertical: 12, alignItems: "center", marginTop: 8, borderWidth: 1, borderColor: "#cbd5e1" },
-  secondaryPressed: { backgroundColor: "#f8fafc" },
-  secondaryText: { color: "#0f172a", fontWeight: "600" },
+  primaryText: { color: "#13210d", fontWeight: "700" },
+  secondaryButton: { borderRadius: radii.sm, paddingVertical: 12, alignItems: "center", marginTop: 8, borderWidth: 1, borderColor: colors.border, backgroundColor: "rgba(15,32,24,0.85)" },
+  secondaryPressed: { backgroundColor: "rgba(15,32,24,1)" },
+  secondaryText: { color: colors.text, fontWeight: "600" },
 });

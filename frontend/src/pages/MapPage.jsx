@@ -54,14 +54,14 @@ export default function MapPage({ complaints }) {
 
   return (
     <div className="space-y-4">
-      <div className="kumbh-glass rounded-xl border border-white/70 p-4 shadow-sm">
+      <div className="nashik-surface p-4">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold">Live Map Summary</h2>
+          <h2 className="text-lg font-semibold nashik-title">Live Map Summary</h2>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => setSatellite((v) => !v)}
-              className="rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white hover:bg-orange-600"
+              className="nashik-btn-primary rounded-full px-3 py-1 text-xs font-semibold"
             >
               {satellite ? "Satellite" : "Street"}
             </button>
@@ -69,7 +69,7 @@ export default function MapPage({ complaints }) {
               type="button"
               onClick={() => setShowHighOnly((v) => !v)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                showHighOnly ? "bg-orange-700 text-white" : "bg-orange-100 text-orange-800"
+                showHighOnly ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)]" : "nashik-chip"
               }`}
             >
               High only
@@ -78,7 +78,7 @@ export default function MapPage({ complaints }) {
               type="button"
               onClick={() => setShowZones((v) => !v)}
               className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                showZones ? "bg-orange-700 text-white" : "bg-orange-100 text-orange-800"
+                showZones ? "bg-[rgba(232,192,64,0.35)] text-[var(--nashik-text)]" : "nashik-chip"
               }`}
             >
               Zones
@@ -86,13 +86,13 @@ export default function MapPage({ complaints }) {
           </div>
         </div>
 
-        <div className="mb-3 grid grid-cols-1 gap-2 text-sm text-slate-700 md:grid-cols-3">
+        <div className="mb-3 grid grid-cols-1 gap-2 text-sm nashik-subtitle md:grid-cols-3">
           <p>Total complaints: <span className="font-semibold">{summary.total}</span></p>
           <p>High priority: <span className="font-semibold">{summary.high}</span></p>
           <p>Zones: <span className="font-semibold">{GEOFENCES.map((z) => z.name).join(", ")}</span></p>
         </div>
 
-        <div className="h-[520px] overflow-hidden rounded-xl border border-slate-200">
+        <div className="h-[520px] overflow-hidden rounded-xl border border-[var(--nashik-border)]">
           <MapContainer center={[19.9975, 73.7898]} zoom={13} scrollWheelZoom className="h-full w-full">
             <TileLayer url={tileUrl} />
 

@@ -152,7 +152,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="nashik-page-bg flex min-h-screen flex-col md:flex-row bg-transparent">
       <Sidebar user={auth.user} onLogout={onLogout} />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 space-y-4">
@@ -161,9 +161,9 @@ export default function App() {
           subtitle="Live grievance intelligence platform for Nashik operations. Track, map, prioritize, and resolve public complaints in real time."
         />
 
-        <div className="kumbh-glass rounded-xl border border-white/70 p-4 shadow-sm">
+        <div className="nashik-surface p-4">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <h2 className="text-xl md:text-2xl font-bold">
+            <h2 className="text-xl md:text-2xl font-bold text-[var(--nashik-text)]">
               Welcome, <span className="kumbh-gradient-text">{auth.user?.name}</span>
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -171,12 +171,12 @@ export default function App() {
                 <button
                   type="button"
                   onClick={runDemoComplaint}
-                  className="rounded border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-900 hover:bg-orange-100"
+                  className="nashik-btn-secondary px-3 py-2 text-sm font-medium"
                 >
                   Add demo complaint (test)
                 </button>
               )}
-              <button onClick={saveCurrentView} className="rounded bg-slate-900 px-3 py-2 text-sm text-white hover:bg-slate-800">
+              <button onClick={saveCurrentView} className="nashik-btn-primary px-3 py-2 text-sm">
                 Save View
               </button>
             </div>
@@ -187,16 +187,16 @@ export default function App() {
               value={filters.q}
               onChange={(e) => handleFilterChange("q", e.target.value)}
               placeholder="Search text/user/location"
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"
+              className="nashik-input px-3 py-2 text-sm"
             />
-            <select value={filters.status} onChange={(e) => handleFilterChange("status", e.target.value)} className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm">
+            <select value={filters.status} onChange={(e) => handleFilterChange("status", e.target.value)} className="nashik-input px-2 py-2 text-sm">
               <option value="">All status</option>
               <option value="new">New</option>
               <option value="assigned">Assigned</option>
               <option value="in-progress">In Progress</option>
               <option value="resolved">Resolved</option>
             </select>
-            <select value={filters.category} onChange={(e) => handleFilterChange("category", e.target.value)} className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm">
+            <select value={filters.category} onChange={(e) => handleFilterChange("category", e.target.value)} className="nashik-input px-2 py-2 text-sm">
               <option value="">All category</option>
               <option value="traffic">Traffic</option>
               <option value="water">Water</option>
@@ -205,17 +205,17 @@ export default function App() {
               <option value="lost_and_found">Lost & Found</option>
               <option value="sanitation">Sanitation</option>
             </select>
-            <select value={filters.priority} onChange={(e) => handleFilterChange("priority", e.target.value)} className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm">
+            <select value={filters.priority} onChange={(e) => handleFilterChange("priority", e.target.value)} className="nashik-input px-2 py-2 text-sm">
               <option value="">All priority</option>
               <option value="high">High</option>
               <option value="medium">Medium</option>
               <option value="low">Low</option>
             </select>
-            <button onClick={applyFilters} className="rounded-lg bg-orange-500 px-3 py-2 text-sm font-medium text-white hover:bg-orange-600">
+            <button onClick={applyFilters} className="nashik-btn-primary px-3 py-2 text-sm font-medium">
               Apply Filters
             </button>
             <select
-              className="rounded-lg border border-slate-200 bg-white px-2 py-2 text-sm"
+              className="nashik-input px-2 py-2 text-sm"
               onChange={(e) => {
                 const view = savedViews.find((v) => v.id === e.target.value);
                 if (!view) return;
@@ -232,11 +232,11 @@ export default function App() {
             </select>
           </div>
 
-          <p className="mb-1 text-xs text-slate-600">Showing {kpi.shown} / {kpi.total} complaints</p>
+          <p className="mb-1 text-xs nashik-subtitle">Showing {kpi.shown} / {kpi.total} complaints</p>
         </div>
 
         {loading ? (
-          <p className="rounded-lg bg-white/80 p-4 text-sm">Loading complaints...</p>
+          <p className="nashik-surface-soft p-4 text-sm">Loading complaints...</p>
         ) : (
           <Routes>
             <Route path="/" element={<DashboardPage complaints={complaints} analytics={analytics} alerts={alerts} />} />
