@@ -49,4 +49,4 @@ services:
     envVars:
       # Public API URL baked into the web app at build time (must be HTTPS, reachable from browsers & phones).
       - key: VITE_API_URL
-        value: https://kumbh-backend.onrender.com
+        value: https://kumbh-backend-tlo1.onrender.com
