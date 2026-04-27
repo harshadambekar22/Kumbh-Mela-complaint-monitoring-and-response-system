@@ -25,11 +25,11 @@
         "ACCESS_NETWORK_STATE"
       ]
     },
+    "owner": "harshadambekar22",
     "extra": {
       "eas": {
-        "projectId": "a7890ad8-dc8c-48a3-be9c-732d19aa83b2"
+        "projectId": "c456e4ca-83f1-4284-9ee0-d2b5d4cccb4d"
       }
-    },
-    "owner": "harshadambekar2225"
+    }
   }
 }

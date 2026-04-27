@@ -183,7 +183,7 @@ export default function App() {
 
         <div className="nashik-surface animate-enter-scale animate-stagger-1 p-4">
           <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <h2 className="text-xl md:text-2xl font-bold text-[var(--nashik-text)]">
+            <h2 className="text-xl md:text-2xl font-bold text-[var(--nashik-text)] nashik-readable">
               Welcome, <span className="kumbh-gradient-text">{auth.user?.name}</span>
             </h2>
             <div className="flex flex-wrap gap-2">
@@ -196,7 +196,7 @@ export default function App() {
                   Add demo complaint (test)
                 </button>
               )}
-              <button onClick={saveCurrentView} className="nashik-btn-primary animate-strong-glow px-3 py-2 text-sm">
+              <button onClick={saveCurrentView} className="nashik-btn-primary nashik-interactive animate-strong-glow px-3 py-2 text-sm">
                 Save View
               </button>
             </div>

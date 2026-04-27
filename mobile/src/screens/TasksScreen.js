@@ -37,7 +37,10 @@ export default function TasksScreen({ complaints, onStatusUpdate }) {
   return (
     <Animated.ScrollView
       contentContainerStyle={styles.container}
-      style={{ opacity: entrance, transform: [{ translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] }}
+      style={[
+        styles.screen,
+        { opacity: entrance, transform: [{ translateY: entrance.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) }] },
+      ]}
     >
       <Text style={styles.title}>Task Board</Text>
       <Text style={styles.sub}>Manage live complaints by workflow stage.</Text>
@@ -83,9 +86,10 @@ export default function TasksScreen({ complaints, onStatusUpdate }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 14, backgroundColor: colors.bg, paddingBottom: 100 },
-  title: { color: colors.gold, fontWeight: "800", fontSize: 20 },
-  sub: { color: colors.textDim, marginTop: 2, marginBottom: 10 },
+  screen: { flex: 1, backgroundColor: colors.bg },
+  container: { flexGrow: 1, padding: 14, backgroundColor: colors.bg, paddingBottom: 100 },
+  title: { color: colors.gold, fontWeight: "800", fontSize: 22 },
+  sub: { color: colors.textDim, marginTop: 2, marginBottom: 10, fontSize: 13 },
   column: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -95,7 +99,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     ...shadows.card,
   },
-  columnTitle: { color: colors.text, fontWeight: "700", marginBottom: 8 },
+  columnTitle: { color: colors.text, fontWeight: "800", marginBottom: 8, fontSize: 14 },
   card: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -104,8 +108,8 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 8,
   },
-  cardText: { color: colors.text, fontSize: 13, marginBottom: 4 },
-  meta: { color: colors.textDim, fontSize: 11 },
+  cardText: { color: colors.text, fontSize: 13, marginBottom: 4, lineHeight: 18 },
+  meta: { color: colors.textDim, fontSize: 12 },
   action: {
     marginTop: 8,
     borderRadius: radii.sm,
@@ -117,6 +121,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   actionPressed: { transform: [{ scale: 0.97 }], opacity: 0.92 },
-  actionText: { color: "#13210d", fontWeight: "700", fontSize: 11 },
+  actionText: { color: "#13210d", fontWeight: "800", fontSize: 12 },
   empty: { color: colors.textDim, fontSize: 12, fontStyle: "italic" },
 });

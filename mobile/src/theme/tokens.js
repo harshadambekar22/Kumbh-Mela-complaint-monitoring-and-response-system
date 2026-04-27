@@ -5,7 +5,7 @@ export const colors = {
   surfaceAlt: "rgba(15,32,24,0.88)",
   border: "rgba(232,192,64,0.26)",
   text: "#fff5c4",
-  textDim: "rgba(229,216,154,0.78)",
+  textDim: "rgba(246,236,193,0.9)",
   gold: "#e8c040",
   olive: "#6b8c2a",
   saffron: "#c8a832",

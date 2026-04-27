@@ -160,7 +160,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
                       onFocus={() => setActiveField("name")}
                       onBlur={() => setActiveField("")}
                       style={[styles.input, activeField === "name" && styles.inputActive]}
-                      placeholderTextColor="#64748b"
+                      placeholderTextColor={colors.textDim}
                     />
                   </Animated.View>
                   <View style={styles.roleWrap}>
@@ -185,7 +185,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
                       onFocus={() => setActiveField("department")}
                       onBlur={() => setActiveField("")}
                       style={[styles.input, activeField === "department" && styles.inputActive]}
-                      placeholderTextColor="#64748b"
+                      placeholderTextColor={colors.textDim}
                     />
                   </Animated.View>
                 </>
@@ -200,7 +200,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
                   onBlur={() => setActiveField("")}
                   autoCapitalize="none"
                   style={[styles.input, activeField === "email" && styles.inputActive]}
-                  placeholderTextColor="#64748b"
+                  placeholderTextColor={colors.textDim}
                 />
               </Animated.View>
               <Animated.View style={[styles.inputWrap, activeField === "password" && styles.inputWrapActive]}>
@@ -212,7 +212,7 @@ export default function AuthScreen({ onLogin, onRegister, busy = false }) {
                   onBlur={() => setActiveField("")}
                   secureTextEntry
                   style={[styles.input, activeField === "password" && styles.inputActive]}
-                  placeholderTextColor="#64748b"
+                  placeholderTextColor={colors.textDim}
                 />
               </Animated.View>
 

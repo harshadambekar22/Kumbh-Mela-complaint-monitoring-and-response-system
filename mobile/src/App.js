@@ -52,13 +52,14 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({
+        sceneContainerStyle: { backgroundColor: colors.bg },
         headerStyle: { backgroundColor: colors.bgSoft },
         headerTitleStyle: { fontWeight: "700", color: colors.gold },
         headerTintColor: colors.gold,
         tabBarActiveTintColor: colors.gold,
         tabBarInactiveTintColor: colors.textDim,
         tabBarStyle: { height: width < 360 ? 62 : 66, paddingBottom: 8, paddingTop: 8, backgroundColor: colors.bgSoft, borderTopColor: colors.border },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "700" },
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "700" },
         tabBarHideOnKeyboard: true,
         tabBarIcon: ({ color, size, focused }) => (
           <View style={[styles.tabIconWrap, focused && styles.tabIconWrapActive]}>
@@ -77,7 +78,7 @@ function HomeTabs({ user, onLogout, complaints, analytics, onStatusUpdate, refre
         options={{
           headerRight: () => (
             <Pressable onPress={refreshData} style={styles.refreshBtn}>
-              <Ionicons name="refresh" size={14} color="#fff" />
+              <Ionicons name="refresh" size={14} color="#13210d" />
               <Text style={styles.refreshText}>Refresh</Text>
             </Pressable>
           ),
